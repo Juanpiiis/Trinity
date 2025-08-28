@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Clan Trinity - Generador de Equipos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background: radial-gradient(circle at center, #050505, #000);
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 42px;
+      color: #39ff14; /* verde neón */
+      text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #bbb;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 320px;
+      height: 140px;
+      margin: 15px;
+      padding: 10px;
+      background: #0d0d0d;
+      color: #39ff14;
+      border: 2px solid #39ff14;
+      border-radius: 10px;
+      outline: none;
+      resize: none;
+      box-shadow: 0 0 10px #39ff14;
+    }
+
+    input {
+      width: 70px;
+      text-align: center;
+      margin: 10px;
+      padding: 8px;
+      font-size: 16px;
+      border: 2px solid #39ff14;
+      border-radius: 8px;
+      background: #0d0d0d;
+      color: #39ff14;
+      box-shadow: 0 0 10px #39ff14;
+    }
+
+    button {
+      padding: 12px 25px;
+      margin: 20px;
+      background: #0d0d0d;
+      border: 2px solid #39ff14;
+      color: #39ff14;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 0 20px #39ff14;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background: #39ff14;
+      color: #000;
+      box-shadow: 0 0 25px #39ff14, 0 0 50px #39ff14;
+    }
+
+    .equipo {
+      margin: 20px;
+      padding: 20px;
+      background: #0d0d0d;
+      border: 2px solid #39ff14;
+      border-radius: 15px;
+      width: 250px;
+      box-shadow: 0 0 20px #39ff14;
+      transition: transform 0.3s;
+    }
+
+    .equipo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #39ff14, 0 0 60px #39ff14;
+    }
+
+    h2 {
+      color: #39ff14;
+      text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+    }
+
+    .contenedor {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>⚔️ Clan Trinity ⚔️</h1>
+  <p>Genera tus equipos al instante</p>
+  
+  <textarea id="jugadores" placeholder="Escribe aquí los nombres de los guerreros..."></textarea><br>
+
+  <label for="tamano">Jugadores por equipo:</label>
+  <input type="number" id="tamano" value="3" min="2"><br>
+
+  <button onclick="generarEquipos()">Generar</button>
+
+  <div id="resultado" class="contenedor"></div>
+
+  <script>
+    function generarEquipos() {
+      let input = document.getElementById("jugadores").value.trim();
+      let tamano = parseInt(document.getElementById("tamano").value);
+
+      if (!input) {
+        alert("⚠️ Ingresa los nombres de los jugadores.");
+        return;
+      }
+      if (tamano < 2) {
+        alert("⚠️ El mínimo es 2 jugadores por equipo.");
+        return;
+      }
+
+      let jugadores = input.split("\n").map(j => j.trim()).filter(j => j !== "");
+
+      if (jugadores.length < tamano * 2) {
+        alert("⚠️ Necesitas al menos " + (tamano * 2) + " jugadores para " + tamano + "v" + tamano + ".");
+        return;
+      }
+
+      jugadores = jugadores.sort(() => Math.random() - 0.5);
+
+      let equipos = [];
+      while (jugadores.length >= tamano) {
+        equipos.push(jugadores.splice(0, tamano));
+      }
+
+      let resultado = document.getElementById("resultado");
+      resultado.innerHTML = "";
+      equipos.forEach((equipo, i) => {
+        resultado.innerHTML += `
+          <div class="equipo">
+            <h2>Equipo ${i + 1}</h2>
+            <p>${equipo.join("<br>")}</p>
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>
