@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clan Black & Red - Bracket</title>
+  <title>Clan Black & Red - Bracket con Niveles</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap');
 
@@ -14,6 +14,14 @@
       --dark-bg: #1a1a1a;
       --darker-bg: #000;
       --card-bg: #0d0d0d;
+      --tier-1: #00ff00;
+      --tier-2: #33cc33;
+      --tier-3: #66cc66;
+      --tier-4: #99cc99;
+      --tier-5: #ff9900;
+      --tier-6: #ff6600;
+      --tier-7: #ff3300;
+      --tier-8: #ff0000;
     }
 
     * {
@@ -414,6 +422,52 @@
       top: -25px;
     }
 
+    /* Estilos para niveles de jugadores */
+    .player-tier {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 8px;
+      text-align: center;
+      line-height: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 3px black;
+    }
+
+    .tier-1 { background-color: var(--tier-1); }
+    .tier-2 { background-color: var(--tier-2); }
+    .tier-3 { background-color: var(--tier-3); }
+    .tier-4 { background-color: var(--tier-4); }
+    .tier-5 { background-color: var(--tier-5); }
+    .tier-6 { background-color: var(--tier-6); }
+    .tier-7 { background-color: var(--tier-7); }
+    .tier-8 { background-color: var(--tier-8); }
+
+    .tier-info {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+    }
+
+    .tier-item {
+      display: flex;
+      align-items: center;
+      margin: 0 10px;
+    }
+
+    .tier-label {
+      margin-left: 5px;
+      font-size: 0.9rem;
+    }
+
     /* Responsive mejorado */
     @media (max-width: 1200px) {
       .round {
@@ -585,14 +639,52 @@
   
   <div class="container">
     <header>
-      <h1>⚔️ Clan Black & Red - Bracket ⚔️</h1>
-      <p class="subtitle">Genera torneos estilo escalera con diseño cyberpunk</p>
+      <h1>⚔️ Clan Buck & Lethal- Bracket ⚔️</h1>
     </header>
+    
+    <div class="tier-info">
+      <div class="tier-item">
+        <div class="player-tier tier-8">8</div>
+        <span class="tier-label">Tier 8 (Alto)</span>
+      </div>
+      <div class="tier-item">
+        <div class="player-tier tier-7">7</div>
+        <span class="tier-label">Tier 7</span>
+      </div>
+      <div class="tier-item">
+        <div class="player-tier tier-6">6</div>
+        <span class="tier-label">Tier 6</span>
+      </div>
+      <div class="tier-item">
+        <div class="player-tier tier-5">5</div>
+        <span class="tier-label">Tier 5</span>
+      </div>
+      <div class="tier-item">
+        <div class="player-tier tier-4">4</div>
+        <span class="tier-label">Tier 4</span>
+      </div>
+      <div class="tier-item">
+        <div class="player-tier tier-3">3</div>
+        <span class="tier-label">Tier 3</span>
+      </div>
+      <div class="tier-item">
+        <div class="player-tier tier-2">2</div>
+        <span class="tier-label">Tier 2</span>
+      </div>
+      <div class="tier-item">
+        <div class="player-tier tier-1">1</div>
+        <span class="tier-label">Tier 1 (Bajo)</span>
+      </div>
+    </div>
     
     <div class="controls">
       <div class="input-group">
-        <label for="jugadores">Jugadores (uno por línea):</label>
-        <textarea id="jugadores" placeholder="Escribe los nombres de los jugadores..."></textarea>
+        <label for="jugadores">Jugadores (uno por línea, formato: Nombre:Tier):</label>
+        <textarea id="jugadores" placeholder="Ejemplo:
+Player1:8
+Player2:5
+Player3:3
+Player4:1"></textarea>
       </div>
       
       <div class="input-group">
@@ -608,6 +700,16 @@
       <div class="input-group">
         <label for="torneo">Nombre del Torneo:</label>
         <input type="text" id="torneo" placeholder="Ej: Torneo de Verano">
+      </div>
+      
+      <div class="input-group">
+        <label for="balance">Balance de Equipos:</label>
+        <select id="balance">
+          <option value="alto">Alto (Tier 8 con Tier 1, Tier 7 con Tier 2, etc.)</option>
+          <option value="medio">Medio (Tier 8 con Tier 3, Tier 7 con Tier 4, etc.)</option>
+          <option value="bajo">Bajo (Tier 8 con Tier 5, Tier 7 con Tier 6, etc.)</option>
+          <option value="ninguno">Sin balance (aleatorio)</option>
+        </select>
       </div>
     </div>
 
@@ -637,6 +739,7 @@
     const jugadoresInput = document.getElementById("jugadores");
     const formatoSelect = document.getElementById("formato");
     const torneoInput = document.getElementById("torneo");
+    const balanceSelect = document.getElementById("balance");
     const bracketDiv = document.getElementById("bracket");
     const championDiv = document.getElementById("champion");
     const championNameDiv = document.getElementById("champion-name");
@@ -675,13 +778,38 @@
       let input = jugadoresInput.value.trim();
       let formato = parseInt(formatoSelect.value);
       let nombreTorneo = torneoInput.value.trim();
+      let balance = balanceSelect.value;
 
       if (!input) {
         alert("⚠️ Ingresa los nombres de los jugadores");
         return;
       }
 
-      let jugadores = input.split("\n").map(j => j.trim()).filter(j => j !== "");
+      // Parsear jugadores y sus niveles
+      let jugadores = [];
+      let lineas = input.split("\n");
+      
+      for (let linea of lineas) {
+        linea = linea.trim();
+        if (!linea) continue;
+        
+        let partes = linea.split(":");
+        if (partes.length !== 2) {
+          alert(`⚠️ Formato incorrecto en: "${linea}". Usa: Nombre:Tier`);
+          return;
+        }
+        
+        let nombre = partes[0].trim();
+        let tier = parseInt(partes[1].trim());
+        
+        if (isNaN(tier) || tier < 1 || tier > 8) {
+          alert(`⚠️ Tier inválido en: "${linea}". Debe ser un número entre 1 y 8.`);
+          return;
+        }
+        
+        jugadores.push({ nombre, tier });
+      }
+      
       if (jugadores.length < formato * 2) {
         alert("⚠️ Se necesitan al menos " + (formato*2) + " jugadores");
         return;
@@ -692,21 +820,8 @@
         document.querySelector('h1').innerHTML = `⚔️ ${nombreTorneo} ⚔️`;
       }
 
-      // Mezclar jugadores
-      jugadores = shuffleArray(jugadores);
-
-      // Crear equipos
-      let equipos = [];
-      while (jugadores.length >= formato) {
-        equipos.push(jugadores.splice(0, formato));
-      }
-
-      // Si quedan jugadores sueltos, agregarlos a equipos existentes
-      if (jugadores.length > 0) {
-        for (let i = 0; i < jugadores.length; i++) {
-          equipos[i % equipos.length].push(jugadores[i]);
-        }
-      }
+      // Crear equipos balanceados
+      let equipos = crearEquiposBalanceados(jugadores, formato, balance);
 
       matchCount = 0;
       rondas = [equipos];
@@ -719,6 +834,69 @@
 
       mostrarBracket();
       championDiv.style.display = 'none';
+    }
+
+    function crearEquiposBalanceados(jugadores, formato, balance) {
+      // Si no hay balance, mezclar aleatoriamente
+      if (balance === "ninguno") {
+        jugadores = shuffleArray(jugadores);
+        let equipos = [];
+        while (jugadores.length >= formato) {
+          equipos.push(jugadores.splice(0, formato));
+        }
+        return equipos;
+      }
+      
+      // Ordenar jugadores por tier (de mayor a menor)
+      jugadores.sort((a, b) => b.tier - a.tier);
+      
+      let equipos = [];
+      let jugadoresRestantes = [...jugadores];
+      
+      // Crear equipos balanceados
+      while (jugadoresRestantes.length >= formato) {
+        let equipo = [];
+        
+        // Agregar el jugador de mayor tier disponible
+        equipo.push(jugadoresRestantes.shift());
+        
+        // Agregar jugadores de menor tier según el nivel de balance
+        for (let i = 1; i < formato; i++) {
+          let indiceComplementario;
+          
+          switch(balance) {
+            case "alto":
+              // Tier 8 con Tier 1, Tier 7 con Tier 2, etc.
+              indiceComplementario = jugadoresRestantes.length - 1;
+              break;
+            case "medio":
+              // Tier 8 con Tier 3, Tier 7 con Tier 4, etc.
+              indiceComplementario = Math.floor(jugadoresRestantes.length / 2);
+              break;
+            case "bajo":
+              // Tier 8 con Tier 5, Tier 7 con Tier 6, etc.
+              indiceComplementario = Math.max(0, jugadoresRestantes.length - 3);
+              break;
+            default:
+              indiceComplementario = Math.floor(Math.random() * jugadoresRestantes.length);
+          }
+          
+          if (jugadoresRestantes.length > 0) {
+            equipo.push(jugadoresRestantes.splice(indiceComplementario, 1)[0]);
+          }
+        }
+        
+        equipos.push(equipo);
+      }
+      
+      // Si quedan jugadores sueltos, agregarlos a equipos existentes
+      if (jugadoresRestantes.length > 0) {
+        for (let i = 0; i < jugadoresRestantes.length; i++) {
+          equipos[i % equipos.length].push(jugadoresRestantes[i]);
+        }
+      }
+      
+      return equipos;
     }
 
     function shuffleArray(array) {
@@ -767,7 +945,18 @@
             
             equipo.forEach(jugador => {
               let p = document.createElement("p");
-              p.textContent = jugador;
+              
+              // Crear elemento para mostrar el tier
+              let tierSpan = document.createElement("span");
+              tierSpan.className = `player-tier tier-${jugador.tier}`;
+              tierSpan.textContent = jugador.tier;
+              
+              // Crear elemento para el nombre
+              let nombreSpan = document.createElement("span");
+              nombreSpan.textContent = jugador.nombre;
+              
+              p.appendChild(tierSpan);
+              p.appendChild(nombreSpan);
               teamDiv.appendChild(p);
             });
             
@@ -822,7 +1011,7 @@
 
     function seleccionarCampeon(rondaIndex, matchIndex) {
       let equipoGanador = rondas[rondaIndex][matchIndex];
-      championNameDiv.textContent = equipoGanador.join(", ");
+      championNameDiv.textContent = equipoGanador.map(j => j.nombre).join(", ");
       championDiv.style.display = 'block';
       
       // Efecto de confeti o partículas para el campeón
@@ -896,14 +1085,15 @@
 
     function agregarEjemplo() {
       const jugadoresEjemplo = [
-        "Player1", "Player2", "Player3", "Player4", 
-        "Player5", "Player6", "Player7", "Player8",
-        "Player9", "Player10", "Player11", "Player12"
+        "Player1:8", "Player2:7", "Player3:6", "Player4:5", 
+        "Player5:4", "Player6:3", "Player7:2", "Player8:1",
+        "Player9:8", "Player10:7", "Player11:6", "Player12:5"
       ];
       
       jugadoresInput.value = jugadoresEjemplo.join("\n");
-      torneoInput.value = "Torneo Ejemplo";
-      formatoSelect.value = "1";
+      torneoInput.value = "Torneo Ejemplo con Niveles";
+      formatoSelect.value = "2";
+      balanceSelect.value = "alto";
       
       // Generar automáticamente el bracket después de cargar el ejemplo
       setTimeout(() => {
